@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -15,6 +15,19 @@ class User(AbstractUser):
         ('patient', 'Patient'),
     )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    
+    groups = models.ManyToManyField(
+        Group,
+        related_name='healthcare_user_set',  # Change this to something unique
+        blank=True,
+        help_text='The groups this user belongs to.'
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='healthcare_user_permissions_set',  # Change this to something unique
+        blank=True,
+        help_text='Specific permissions for this user.'
+    )
 
     @property
     def full_name(self):
